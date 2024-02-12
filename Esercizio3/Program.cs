@@ -40,14 +40,13 @@ while(!Int32.TryParse(stringaAcquisita, out numeroGiorni));
 
 // richiesta giorno della settimana
 count = 0;
-var giorniSettimana = new List<DayOfWeek>();
+DayOfWeek[] giorniSettimana = (DayOfWeek[])Enum.GetValues(typeof(DayOfWeek));
 
-foreach(DayOfWeek gg in Enum.GetValues(typeof(DayOfWeek)))
+foreach(DayOfWeek giorno in giorniSettimana)
 {
-    string nomeGiorno = gg.ToString("d") + " = " + gg.ToString("G");
-    giorniSettimana.Add(gg);
-    Console.WriteLine(nomeGiorno);
+    Console.WriteLine(giorno.ToString("d") + " = " + giorno.ToString());
 }
+
 do
 {
     if (count > 0)
