@@ -19,6 +19,11 @@
 
 using System.Globalization;
 
+//StatoOrdine stato = (StatoOrdine)4;
+
+//Console.WriteLine(stato.ToString());
+//Console.ReadLine();
+
 var numeroGiorni = 0;
 var giornoSelezionato = 0;
 string stringaAcquisita;
@@ -44,7 +49,7 @@ DayOfWeek[] giorniSettimana = (DayOfWeek[])Enum.GetValues(typeof(DayOfWeek));
 
 foreach(DayOfWeek giorno in giorniSettimana)
 {
-    Console.WriteLine(giorno.ToString("d") + " = " + giorno.ToString());
+    Console.WriteLine(giorno.ToString("d") + " = " + giorno.GetItalianDayOfWeek());
 }
 
 do
@@ -77,4 +82,40 @@ while (contaGiorni != numeroGiorni)
     }
 
     data = data.AddDays(1);
+}
+
+
+
+public static class Utilities
+{
+    public static string GetItalianDayOfWeek(this DayOfWeek day)
+    {
+        // Create a CultureInfo for Italian in Italy
+        CultureInfo italianCulture = new CultureInfo("it-IT");
+
+        // Convert the DayOfWeek enum to a DateTime, using a base date plus the number of days for the DayOfWeek (0 for Sunday, 1 for Monday, etc.)
+        DateTime baseDate = new DateTime(2023, 1, 1); // Use any date that is a Sunday
+        DateTime targetDate = baseDate.AddDays((int)day);
+
+        // Get the day of the week in Italian
+        string italianDayOfWeek = targetDate.ToString("dddd", italianCulture);
+
+        return italianDayOfWeek;
+    }
+}
+
+public class Ordine
+{
+    public int Id { get; set; }
+    //..prodotto ordinato, quantità, etc..
+    public StatoOrdine Stato { get; set; }
+
+}
+
+public enum StatoOrdine
+{
+    InAttesa = 0,
+    Schedulato = 1,
+    InLavorazione = 2,
+    Concluso = 3
 }
