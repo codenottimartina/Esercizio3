@@ -19,75 +19,68 @@
 
 using System.Globalization;
 
-//StatoOrdine stato = (StatoOrdine)4;
-
-//Console.WriteLine(stato.ToString());
-//Console.ReadLine();
-
-var numeroGiorni = 0;
-var giornoSelezionato = 0;
-string stringaAcquisita;
-int count = 0;
-
 // richiesta numero giorni
-do
-{
-    if(count > 0)
-    {
-        Console.WriteLine("Importo inserito non valido");
-    }
-    Console.WriteLine("Inserire un numero da 1 a 100");
-    stringaAcquisita = Console.ReadLine();
-    count++;
-}
-while(!Int32.TryParse(stringaAcquisita, out numeroGiorni));
-// converte da stringa a int32 e restituisce true se la conversione è avvenuta
+var numeroGiorni = Utilities.AcquisisciInteroDaConsole("Inserire un numero da 1 a 100", 1, 100);
+
 
 // richiesta giorno della settimana
-count = 0;
 DayOfWeek[] giorniSettimana = (DayOfWeek[])Enum.GetValues(typeof(DayOfWeek));
 
 foreach(DayOfWeek giorno in giorniSettimana)
 {
     Console.WriteLine(giorno.ToString("d") + " = " + giorno.GetItalianDayOfWeek());
 }
-
-do
-{
-    if (count > 0)
-    {
-        Console.WriteLine("Importo inserito non valido");
-    }
-    Console.WriteLine("Scegli un giorno della settimana:");
-    stringaAcquisita = Console.ReadLine();
-    count++;
-}
-while (!Int32.TryParse(stringaAcquisita, out giornoSelezionato) || giornoSelezionato < 0 || giornoSelezionato > 6);
+var giornoSelezionato = Utilities.AcquisisciInteroDaConsole("Scegli un giorno della settimana:", 0, 6);
 
 // stampa del risultato
 Console.WriteLine("numero giorni = " + numeroGiorni);
-Console.WriteLine("Giorno selezionato = " + giornoSelezionato + " (" + giorniSettimana[giornoSelezionato] + ")");
+Console.WriteLine("Giorno selezionato = " + giornoSelezionato + " (" + giorniSettimana[giornoSelezionato].GetItalianDayOfWeek() + ")");
 
-var contaGiorni = 0;
-DateTime data = DateTime.Now;
-
-Console.WriteLine("Ecco i prossimi " + numeroGiorni + " " + giorniSettimana[giornoSelezionato].ToString("G"));
-while (contaGiorni != numeroGiorni)
-{
-    if (data.DayOfWeek.Equals(giorniSettimana[giornoSelezionato]))
-    {
-        Console.WriteLine(data.ToString("dd/MM/yyyy"));
-        data = data.AddDays(6);
-        contaGiorni++;
-    }
-
-    data = data.AddDays(1);
-}
-
-
+Console.WriteLine("Ecco i prossimi " + numeroGiorni + " " + giorniSettimana[giornoSelezionato].GetItalianDayOfWeek());
+Utilities.StampaDateSelezionate(numeroGiorni, giorniSettimana, giornoSelezionato);
 
 public static class Utilities
 {
+    public static int AcquisisciInteroDaConsole(string messaggioUtente, int min, int max)
+    {
+        Console.WriteLine(messaggioUtente);
+        var stringaAcquisita = Console.ReadLine();
+
+        if (!Int32.TryParse(stringaAcquisita, out int toReturn))
+        {
+            Console.WriteLine("Attenzione, il valore inserito non è un valore valido");
+            return AcquisisciInteroDaConsole(messaggioUtente, min, max);
+        }
+
+        if (!(_checkValoreSogliaMassima(toReturn, max) && _checkValoreSogliaMinima(toReturn, min)))
+        {
+            return AcquisisciInteroDaConsole(messaggioUtente, min, max);
+        }
+
+        return toReturn;
+    }
+
+    private static bool _checkValoreSogliaMinima(int numeroAcquisito, int min)
+    {
+        if (numeroAcquisito < min)
+        {
+            Console.WriteLine("Attenzione, il valore non può essere minore di " + min);
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool _checkValoreSogliaMassima(int numeroAcquisito, int max)
+    {
+        if (numeroAcquisito > max)
+        {
+            Console.WriteLine("Attenzione, il valore non può essere maggiore di " + max);
+            return false;
+        }
+
+        return true;
+    }
     public static string GetItalianDayOfWeek(this DayOfWeek day)
     {
         // Create a CultureInfo for Italian in Italy
@@ -102,20 +95,22 @@ public static class Utilities
 
         return italianDayOfWeek;
     }
+
+    public static void StampaDateSelezionate(int numeroGiorni, DayOfWeek[] giorniSettimana, int giornoSelezionato)
+    {
+        var contaGiorni = 0;
+        DateTime data = DateTime.Today;
+        while (contaGiorni != numeroGiorni)
+        {
+            if (data.DayOfWeek.Equals(giorniSettimana[giornoSelezionato]))
+            {
+                Console.WriteLine(data.ToString("dd/MM/yyyy"));
+                data = data.AddDays(6);
+                contaGiorni++;
+            }
+
+            data = data.AddDays(1);
+        }
+    }
 }
 
-public class Ordine
-{
-    public int Id { get; set; }
-    //..prodotto ordinato, quantità, etc..
-    public StatoOrdine Stato { get; set; }
-
-}
-
-public enum StatoOrdine
-{
-    InAttesa = 0,
-    Schedulato = 1,
-    InLavorazione = 2,
-    Concluso = 3
-}
