@@ -22,18 +22,14 @@ using System.Globalization;
 // richiesta numero giorni
 var numeroGiorni = Utilities.AcquisisciInteroDaConsole("Inserire un numero da 1 a 100", 1, 100);
 
-
 // richiesta giorno della settimana
 DayOfWeek[] giorniSettimana = (DayOfWeek[])Enum.GetValues(typeof(DayOfWeek));
+Utilities.StampaGiorniSettimana(giorniSettimana);
 
-foreach(DayOfWeek giorno in giorniSettimana)
-{
-    Console.WriteLine(giorno.ToString("d") + " = " + giorno.GetItalianDayOfWeek());
-}
 var giornoSelezionato = Utilities.AcquisisciInteroDaConsole("Scegli un giorno della settimana:", 0, 6);
 
 // stampa del risultato
-Console.WriteLine("numero giorni = " + numeroGiorni);
+Console.WriteLine("Numero giorni = " + numeroGiorni);
 Console.WriteLine("Giorno selezionato = " + giornoSelezionato + " (" + giorniSettimana[giornoSelezionato].GetItalianDayOfWeek() + ")");
 
 Console.WriteLine("Ecco i prossimi " + numeroGiorni + " " + giorniSettimana[giornoSelezionato].GetItalianDayOfWeek());
@@ -110,6 +106,14 @@ public static class Utilities
             }
 
             data = data.AddDays(1);
+        }
+    }
+
+    public static void StampaGiorniSettimana(DayOfWeek[] giorniSettimana)
+    {
+        foreach (DayOfWeek giorno in giorniSettimana)
+        {
+            Console.WriteLine(giorno.ToString("d") + " = " + giorno.GetItalianDayOfWeek());
         }
     }
 }
